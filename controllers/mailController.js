@@ -8,7 +8,7 @@ exports.mailContact = async(req,res)=>{
           port: 465,
           auth: {
             user: 'helpmetutors27@gmail.com',
-            pass: 'xyhrovwrydfoqmmn'
+            pass: 'xyhrovwrydfoq'
           }
           });
 
@@ -53,7 +53,7 @@ exports.mailParent = async(req,res)=>{
       port: 465,
       auth: {
         user: 'helpmetutors27@gmail.com',
-        pass: 'xyhrovwrydfoqmmn'
+        pass: 'xyhrovwrydfoq'
       }
       });
 
@@ -110,7 +110,7 @@ exports.mailTeacher = async(req,res)=>{
       port: 465,
       auth: {
         user: 'helpmetutors27@gmail.com',
-        pass: 'xyhrovwrydfoqmmn'
+        pass: 'xyhrovwrydfoq'
       }
       });
     var mailOptions = { 
@@ -166,7 +166,7 @@ exports.appliedTeacher = async(req,res)=>{
     port: 465,
     auth: {
       user: 'helpmetutors27@gmail.com',
-      pass: 'xyhrovwrydfoqmmn'
+      pass: 'xyhrovwrydfoq'
     }
     });
   var mailOptions = { 
