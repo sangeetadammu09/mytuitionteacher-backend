@@ -1,0 +1,132 @@
+//parent routes tested
+
+//teacher route tested
+
+// admin routes tested
+
+"url": "mongodb+srv://sangeeta:sangeeta@cluster0.36fka.mongodb.net/helpmetutors-server?retryWrites=true&w=majority",
+
+ "url": "mongodb://localhost:27017/helpmetutors-server",
+
+
+ app.get("/",(req,res)=>{
+  let sql = "SELECT * FROM DEMO_TABLE";
+  connection.query(sql, function(err, results){
+      if (err) throw err;
+      res.send(results);
+  });
+})
+
+
+
+// let filerouter = require('./routes/testRoute');
+// app.use(express.static('resources'));
+// app.use('/test', filerouter);
+
+//const multer = require('multer');
+
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//        cb(null, __basedir + '/uploads/')
+//     },
+//     filename: (req, file, cb) => {
+//        cb(null, file.fieldname + "-" + Date.now() + "-" + file.originalname)
+//     }
+//   });   
+   
+// const upload = multer({storage: storage, dest: 'upload'});
+// app.post("/upload",upload.single('upload'),async(req,res)=>{
+//   res.send("file upload successful")
+// })
+
+
+
+
+
+**
+ * @swagger
+ * definitions:
+ *  AdminRegister:
+ *   type: object
+ *   properties:
+ *    name:
+ *     type: string
+ *     description: name of the admin
+ *     example: 'John Deo'
+ *    email:
+ *     type: string
+ *     description: email of the admin
+ *     example: 'john@example.com'
+ *   password:
+ *     type: string
+ *     description: password of the admin
+ *     example: 'john123'
+ *   cpass:
+ *     type: string
+ *     description: confirm password
+ *     example: 'john123'
+ *  AdminLogin:
+ *   type: object
+ *   properties:
+ *    name:
+ *     type: string
+ *     description: name of the admin
+ *     example: 'John Deo'
+ *    email:
+ *     type: string
+ *     description: email of the admin
+ *     example: 'john@example.com'
+ */
+
+
+/**
+  * @swagger
+  * /register:
+  *  post:
+  *   summary: Admin Register
+  *   requestBody:
+  *    content:
+  *     application/json:
+  *      schema:
+  *       $ref: '#/definitions/AdminRegister'
+  *   responses:
+  *    200:
+  *     description: success
+  *    500:
+  *     description: error
+  */
+
+/**
+  * @swagger
+  * /login:
+  *  post:
+  *   summary: Admin Login
+  *   requestBody:
+  *    content:
+  *     application/json:
+  *      schema:
+  *       $ref: '#/definitions/AdminLogin'
+  *   responses:
+  *    200:
+  *     description: success
+  *    500:
+  *     description: error
+  */
+
+
+//swagger options
+
+const swaggerOptions={
+  definition:{
+      openapi:'3.0.0',
+      info:{
+          title:'Helpmetutors API',
+          version:'1.0.0',
+          description:'API for Helpmetutors Educational Consultancy',
+          servers:["http://localhost:3000"]
+      }
+  },
+  apis:["index.js"]
+  
+}
+

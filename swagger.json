@@ -1,0 +1,869 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "API Documentation for Helpmetutors",
+      "description": "API for Helpmetutors Educational Consultancy",
+      "servers":["http://localhost:3000"],
+      "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+      }
+    },
+    "basePath": "/",
+    "tags": [
+      {
+        "name": "Admin",
+        "description": "API for admin"
+      },
+      {
+        "name": "Parent",
+        "description": "API for parent"
+      },
+      {
+        "name": "Teacher",
+        "description": "API for teacher"
+      }
+    ],
+    "produces": ["application/json"],
+    "paths": {
+      "/admin/register" : {
+        "post" : {
+            "tags": ["Admin"],
+            "summary" : "Admin register",
+            "description": "Admin register to the application",
+            "produces": ["application/json"],
+            "consumes": ["application/json"],
+            "parameters": [
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "admin object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/AdminRegister"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "successful",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/AdminRegister"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        }
+      },
+      "/admin/login" : {
+        "post" : {
+            "tags": ["Admin"],
+            "summary" : "Admin login",
+            "description": "Admin login to the application",
+            "produces": ["application/json"],
+            "consumes": ["application/json"],
+            "parameters": [
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "admin object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/AdminLogin"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "successful",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/AdminLogin"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        }
+      },
+      "/teacher/register" : {
+        "post" : {
+            "tags": ["Teacher"],
+            "summary" : "Teacher register",
+            "description": "Teacher register to the application",
+            "produces": ["application/json"],
+            "consumes": ["application/json"],
+            "parameters": [
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "teacher object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/TeacherRegister"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "successful",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/TeacherRegister"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        }
+      },
+      "/teacher/login" : {
+        "post" : {
+            "tags": ["Teacher"],
+            "summary" : "Teacher login",
+            "description": "Teacher login to the application",
+            "produces": ["application/json"],
+            "consumes": ["application/json"],
+            "parameters": [
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "teacher object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/TeacherLogin"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "successful",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/TeacherLogin"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        }
+      },
+      "/teacher/form" : {
+        "post" : {
+            "tags": ["Teacher"],
+            "summary" : "Teacher form",
+            "description": "Teacher form",
+            "produces": ["application/json"],
+            "consumes": ["application/json"],
+            "parameters": [
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "teacher object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/Teacher"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "successful",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Teacher"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        }
+      },
+      "/teacher/listofteachersbypage" : {
+        "post": {
+          "tags": ["Teacher"],
+          "summary": "Get all teachers with pagination",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "teacher object",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/TeacherPagination"
+              }
+          }
+        ],
+          "responses": {
+            "200": {
+              "description": "ok",
+              "schema": {
+                "$ref": "#/definitions/TeacherPagination"
+              }
+            },
+            "400": {
+              "description": "Invalid status value",
+              "schema": {
+                  "$ref": "#/definitions/InvalidResponse"
+              }
+          }
+          }
+        }
+      },
+      "/teacher/{id}" :  {
+        "get": {
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "Id of the teacher which is to be searched",
+              "type": "string"
+            }
+          ],
+          "produces": ["application/json"],
+          "tags": ["Teacher"],
+          "summary": "Get teacher by id",
+          "responses": {
+            "200": {
+              "description": "ok",
+              "schema": {
+                "$ref": "#/definitions/Teacher"
+              }
+            },
+            "404": {
+              "description": "not found"
+            },
+            "400": {
+              "description": "Invalid status value",
+              "schema": {
+                  "$ref": "#/definitions/InvalidResponse"
+              }
+          }
+          }
+        }
+      },
+      "/teacher/update/{id}" : {
+        "put" : {
+            "tags": ["Teacher"],
+            "summary" : "Update the teacher ",
+            "description": "Update the teacher ",
+            "produces": ["application/json"],
+            "consumes": ["application/json"],
+            "parameters": [
+              {
+                  "name": "id",
+                  "in": "path",
+                  "description": "teacher id that needs to be updated",
+                  "required": true,
+                  "type": "string"
+              },
+              {
+                "in": "body",
+                "name": "body",
+                "description": "teacher object",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/Teacher"
+                }
+            }
+          ],
+            "responses": {
+                "200": {
+                    "description": "successful",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Teachers"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        }
+      },
+      "/teacher/delete/{id}" : {    
+        "delete": {
+          "tags": ["Teacher"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "Id of the teacher which is to be deleted",
+              "type": "string"
+            }
+          ],
+          "summary": "Delete teacher by id",
+          "responses": {
+            "200": {
+              "description": "ok",
+              "schema": {
+                "$ref": "#/definitions/Teacher"
+              }
+            },
+            "404": {
+              "description": "not found"
+            },
+            "400": {
+              "description": "Invalid status value",
+              "schema": {
+                  "$ref": "#/definitions/InvalidResponse"
+              }
+          }
+          }
+        }
+      },
+      "/teacher/search" : {
+        "post": {
+          "tags": ["Teacher"],
+          "summary": "Search Teacher",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "teacher object",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/TeacherSearch"
+              }
+          }
+        ],
+          "responses": {
+            "200": {
+              "description": "ok",
+              "schema": {
+                "$ref": "#/definitions/TeacherSearch"
+              }
+            },
+            "400": {
+              "description": "Invalid status value",
+              "schema": {
+                  "$ref": "#/definitions/InvalidResponse"
+              }
+          }
+          }
+        }
+      },
+      "/parent/register" : {
+        "post" : {
+            "tags": ["Parent"],
+            "summary" : "Parent register",
+            "description": "Parent register to the application",
+            "produces": ["application/json"],
+            "consumes": ["application/json"],
+            "parameters": [
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "parent object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/ParentRegister"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "successful",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/ParentRegister"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        }
+      },
+      "/parent/login" : {
+        "post" : {
+            "tags": ["Parent"],
+            "summary" : "Parent login",
+            "description": "Parent login to the application",
+            "produces": ["application/json"],
+            "consumes": ["application/json"],
+            "parameters": [
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "parent object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/ParentLogin"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "successful",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/ParentLogin"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        }
+      },
+      "/parent/form" : {
+        "post" : {
+            "tags": ["Parent"],
+            "summary" : "Parent form",
+            "description": "Parent form",
+            "produces": ["application/json"],
+            "consumes": ["application/json"],
+            "parameters": [
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "parent object",
+                    "required": true,
+                    "schema": {
+                      "$ref": "#/definitions/Parent"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "successful",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Parent"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        }
+      },
+      "/parent/listofparents" : {
+        "get": {
+          "tags": ["Parent"],
+          "summary": "Get all parents",
+          "responses": {
+            "200": {
+              "description": "ok",
+              "schema": {
+                "$ref": "#/definitions/Parents"
+              }
+            },
+            "400": {
+              "description": "Invalid status value",
+              "schema": {
+                  "$ref": "#/definitions/InvalidResponse"
+              }
+          }
+          }
+        }
+      },
+      "/parent/{id}" :  {
+        "get": {
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "Id of the parent which is to be searched",
+              "type": "string"
+            }
+          ],
+          "produces": ["application/json"],
+          "tags": ["Parent"],
+          "summary": "Get parent by id",
+          "responses": {
+            "200": {
+              "description": "ok",
+              "schema": {
+                "$ref": "#/definitions/Parent"
+              }
+            },
+            "404": {
+              "description": "not found"
+            },
+            "400": {
+              "description": "Invalid status value",
+              "schema": {
+                  "$ref": "#/definitions/InvalidResponse"
+              }
+          }
+          }
+        }
+      },
+      "/parent/update/{id}" : {
+        "put" : {
+            "tags": ["Parent"],
+            "summary" : "Update the parent ",
+            "description": "Update the parent ",
+            "produces": ["application/json"],
+            "consumes": ["application/json"],
+            "parameters": [
+              {
+                  "name": "id",
+                  "in": "path",
+                  "description": "parent id that needs to be updated",
+                  "required": true,
+                  "type": "string"
+              },
+              {
+                "in": "body",
+                "name": "body",
+                "description": "parent object",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/Parent"
+                }
+            }
+          ],
+            "responses": {
+                "200": {
+                    "description": "successful",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Parents"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid status value",
+                    "schema": {
+                        "$ref": "#/definitions/InvalidResponse"
+                    }
+                }
+            }
+        }
+      },
+      "/parent/delete/{id}" : {    
+        "delete": {
+          "tags": ["Parent"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "Id of the parent which is to be deleted",
+              "type": "string"
+            }
+          ],
+          "summary": "Delete parent by id",
+          "responses": {
+            "200": {
+              "description": "ok",
+              "schema": {
+                "$ref": "#/definitions/Parent"
+              }
+            },
+            "404": {
+              "description": "not found"
+            },
+            "400": {
+              "description": "Invalid status value",
+              "schema": {
+                  "$ref": "#/definitions/InvalidResponse"
+              }
+          }
+          }
+        }
+      }
+    },
+    "definitions": {   
+      "AdminRegister": {
+        "type": "object",
+        "properties": {
+          "aname": {
+            "type": "string"
+          },
+          "aemail": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "cpass": {
+            "type": "string"
+          }      
+        }
+       },
+    "AdminLogin": {
+        "type": "object",
+        "properties": {
+          "aemail": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }     
+        }
+      },
+      "Admins": {
+        "type": "array",
+        "$ref": "#/definitions/Admin"
+      },
+      "TeacherRegister":{
+        "type": "object",
+      "properties": {
+        "tname": {
+          "type": "string"
+        },
+        "temail": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "cpass": {
+          "type": "string"
+        }      
+      }
+    },
+      "TeacherLogin" : {
+        "type": "object",
+        "properties": {
+          "temail": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }     
+        }
+      },
+      "TeacherPagination" : {
+        "type": "object",
+        "properties": {
+          "startNumber": {
+            "type": "string"
+          },
+          "pageSize": {
+            "type": "string"
+          }     
+        }
+      },
+      "TeacherSearch" : {
+        "type": "object",
+        "properties": {
+          "tname": {
+            "type": "string"
+          },
+          "qualification": {
+              "type": "string"
+          }, 
+          "state": {
+              "type": "string"
+          },
+          "city": {
+              "type": "string"
+          },
+          "subjects": {
+            "type": "string"
+          },  
+          "modeofteaching": {
+            "type": "string"
+          }
+        }
+      },
+      "Teacher" : {
+        "properties": {
+            "tname": {
+              "type": "string"
+            },
+            "temail": {
+              "type": "string"
+            },
+            "contact": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "qualification": {
+                "type": "string"
+              },
+              "teachingexp": {
+                "type": "string"
+              },
+              "about": {
+                "type": "string"
+              },
+              "subjects": {
+                "type": "string"
+              },
+              "modeofteaching": {
+                "type": "string"
+              },  
+              "timing": {
+                "type": "string"
+              },
+              "charge": {
+                  "type": "string"
+                },
+                "image": {
+                  "type": "string"
+                },
+                "uploadresume": {
+                  "type": "string"
+                },
+                "idproof": {
+                  "type": "string"
+                }                
+          }
+      },
+      "Teachers": {
+        "type": "array",
+        "$ref": "#/definitions/Teacher"
+      },
+      "ParentRegister":{
+        "type": "object",
+      "properties": {
+        "pname": {
+          "type": "string"
+        },
+        "pemail": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "cpass": {
+          "type": "string"
+        }      
+      }
+    },
+      "ParentLogin" : {
+        "type": "object",
+        "properties": {
+          "pemail": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }     
+        }
+      },
+      "Parent" : {
+        "properties": {
+            "pname": {
+              "type": "string"
+            },
+            "pemail": {
+              "type": "string"
+            },
+            "contact": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "lookingfor": {
+                "type": "string"
+              },
+              "grade": {
+                "type": "string"
+              },
+              "subjects": {
+                "type": "string"
+              },
+              "details": {
+                "type": "string"
+              },  
+              "modeofteaching": {
+                "type": "string"
+              },
+              "gender": {
+                  "type": "string"
+                },
+                "budget": {
+                  "type": "number"
+                },
+                "budgettype": {
+                    "type": "string"
+                  },
+                "document": {
+                  "type": "string"
+                },
+                "idproof": {
+                  "type": "string"
+                }                
+          }
+      },
+      "Parents": {
+        "type": "array",
+        "$ref": "#/definitions/Parent"
+      },
+      "InvalidResponse": {
+        "type": "object",
+        "properties": {
+            "statusCode": {
+                "type": "string"
+            },
+            "message": {
+                "type": "string"
+            }
+        }
+  
+    }
+    }
+  }
