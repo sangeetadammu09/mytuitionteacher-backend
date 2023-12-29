@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const parentprofileSchema = mongoose.Schema({
-    pname : {type:String, required:true},
-    pemail: {type:String, required:true},
+
+const parentSchema = mongoose.Schema({
+    name : {type:String, required:true},
+    email: {type:String, required:true},
     contact:{type:String, required:true},
     state:{type:String, required:true},
     city:{type:String, required:true},
@@ -18,9 +19,10 @@ const parentprofileSchema = mongoose.Schema({
     gender:{type:String, required:true},
     budget:{type:String, required:true},
     budgettype:{type:String, required:true},
-    document:{type:String},
-    creation_dt:{type:Date,default: Date.now}
-})
+    document:{type:String, required:false}, 
+    //imageUrl: {type:String, required:false}
+},{timestamps:true, versionKey:false})
 
 
-module.exports = mongoose.model('parentprofile', parentprofileSchema)
+module.exports = mongoose.model('parentprofiles', parentSchema);
+

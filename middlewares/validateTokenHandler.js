@@ -7,12 +7,12 @@ const validateToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer")) {
     token = authHeader.split(" ")[1];
+    console.log(token)
     jwt.verify(token, process.env.SECRET_KEY,(err) => {
+      
       if (err) {
         res.status(401).json({ error:'User is not authorized'})
       }
-     // req.user = decoded.user;
-     // console.log(decoded,'decoded')
       next();
     });
 

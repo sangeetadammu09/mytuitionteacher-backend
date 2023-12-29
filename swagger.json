@@ -457,13 +457,14 @@
             }
         }
       },
+      
       "/parent/form" : {
         "post" : {
             "tags": ["Parent"],
             "summary" : "Parent form",
             "description": "Parent form",
             "produces": ["application/json"],
-            "consumes": ["application/json"],
+            "consumes": ["multipart/form-data"],
             "parameters": [
                 {
                     "in": "body",
@@ -805,10 +806,10 @@
       },
       "Parent" : {
         "properties": {
-            "pname": {
+            "name": {
               "type": "string"
             },
-            "pemail": {
+            "email": {
               "type": "string"
             },
             "contact": {
@@ -842,11 +843,10 @@
                     "type": "string"
                   },
                 "document": {
-                  "type": "string"
-                },
-                "idproof": {
-                  "type": "string"
-                }                
+                  "type": "string",
+                  "format": "base64"
+                }
+                             
           }
       },
       "Parents": {

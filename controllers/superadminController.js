@@ -1,7 +1,6 @@
 const bcrypt = require ('bcryptjs');
 const Joi = require('joi');
 const SuperAdmin = require('../models/superadminModel');
-const config = require ('config');
 const jwt = require ('jsonwebtoken');
 
 exports.adminregister = async(req,res)=> {
