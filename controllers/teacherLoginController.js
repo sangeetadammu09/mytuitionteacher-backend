@@ -1,6 +1,7 @@
 const bcrypt = require ('bcryptjs');
 const Joi = require('joi');
-const Teacher = require('../models/teacherLoginModel');
+const TeacherLogin = require('../models/teacherLogin');
+
 const config = require ('config');
 const jwt = require ('jsonwebtoken');
 
@@ -18,9 +19,9 @@ exports.teacherregister = async(req,res)=> {
          teacherfields.password = await bcrypt.hash (teacherfields.password, salt);
 
          try{
-            let teacher= await Teacher.findOne({email:teacherfields.email})
+            let teacher= await TeacherLogin.findOne({email:teacherfields.email})
             if(!teacher){
-                teacher = new Teacher(teacherfields);
+                teacher = new TeacherLogin(teacherfields);
                 await teacher.save();
                 return res.status(200).json({
                     message: "Teacher registered successfully",
@@ -58,7 +59,7 @@ exports.teacherlogin= async(req,res)=> {
         })
 
         const teacherfields = await schema.validateAsync(req.body);
-        let teacher = await Teacher.findOne({temail:teacherfields.email});
+        let teacher = await TeacherLogin.findOne({temail:teacherfields.email});
         if(teacher){
             const isMatch = await bcrypt.compare(teacherfields.password, teacher.password)
         

@@ -7,7 +7,7 @@ const validateToken = async (req, res, next) => {
   let authHeader = req.headers.Authorization || req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer")) {
     token = authHeader.split(" ")[1];
-    console.log(token)
+    //console.log(token)
     jwt.verify(token, process.env.SECRET_KEY,(err) => {
       
       if (err) {

@@ -10,13 +10,15 @@ router.post('/login',parentController.parentlogin);
 
 router.post('/form',fileUpload("./Storage/images"),parentController.parentcreate);
 
+router.put('/update/:id', fileUpload("./Storage/images"),parentController.updateparent);
+
 //router.get('/listofparents', parentController.listofparents);
 
 router.post('/listofparents',validateToken,parentController.listofparentsbypage);
 
-router.get('/:id',validateToken, parentController.singleparent)
+router.get('/:id',validateToken, parentController.singleparent);
 
-router.put('/update/:id', validateToken,parentController.updateparent);
+router.get('/check/:id', parentController.checkPhoneandEmailValidation)
 
 router.delete('/delete/:id',validateToken, parentController.deleteparent);
 

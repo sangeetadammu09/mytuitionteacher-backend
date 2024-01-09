@@ -1,11 +1,114 @@
 const Joi = require('joi');
-const RegisteredTeacher = require('../models/teacherRegisterModel');
+const RegisteredTeacher = require('../models/Teacher');
 const TeacherHistory = require('../models/teacherHistoryModel')
+const TeacherLogin = require('../models/TeacherLogin');
+const bcrypt = require ('bcryptjs');
+const jwt = require ('jsonwebtoken');
 
-exports.teacherRegister = async(req,res)=>{
+exports.teacherregister = async(req,res)=> {
+    try{
+         const schema = Joi.object({
+             name: Joi.string().required(),
+             email: Joi.string().email().required(),
+             password: Joi.string().required(),
+             cpass: Joi.string().required(),
+             isActive :Joi.boolean()
+         })
+         const teacherfields = await schema.validateAsync(req.body);
+         const salt = await bcrypt.genSalt(10);
+         teacherfields.password = await bcrypt.hash (teacherfields.password, salt);
+
+         try{
+            let teacher= await TeacherLogin.findOne({email:teacherfields.email})
+            if(!teacher){
+                teacher = new TeacherLogin(teacherfields);
+                await teacher.save();
+                return res.status(200).json({
+                    message: "Teacher registered successfully",
+                    regteacher: teacher,
+                    status: 'success'
+
+                })
+            }else {
+                return res.status(400).json({
+                  message: "Teacher Already exists",
+                  status : "failed"
+                })
+            }
+         }catch(err){
+            return res.status(500).json({
+                message: "something went wrong",
+                error: err.message,
+              })
+
+         }
+    }catch(err){
+        return res.status(500).json({
+            message: "Validation problem occured",
+            error: err.message,
+          })
+    }
+}
+
+exports.teacherlogin= async(req,res)=> {
+  
+    try{
+        const schema = Joi.object({
+          email: Joi.required(),
+          password: Joi.required()
+        })
+
+        const teacherfields = await schema.validateAsync(req.body);
+        let teacher = await TeacherLogin.findOne({email:teacherfields.email});
+        if(teacher){
+            const isMatch = await bcrypt.compare(teacherfields.password, teacher.password)
+        
+        if(isMatch){
+            const payload = {
+                teacher: {
+                    id :teacher._id
+                }
+            }
+            jwt.sign(payload,process.env.SECRET_KEY, (err, token) => {
+                if (err)
+                    throw err;
+                const loggedteacher = { teacherid: teacher.id,teachername: teacher.name, teacheremail: teacher.email };
+
+                return res.status(200).json({
+                    message: "Teacher Logged In succesfully",
+                    loggedteacher: loggedteacher,
+                    token: token
+                });
+
+            })
+            
+        }else{
+            return res.status (422).json({
+                message: "wrong username/password",
+                status: "failed"
+            })
+        }
+
+    }else{
+        return res.status (422).json({
+            message: "wrong username/password",
+            status: "failed"
+        })
+    }
+    
+    
+}catch(err){
+    return res.status (400).json({
+        message: "Validation error",
+        error: err.message
+    })
+}
+}
+
+exports.createteacher = async(req,res)=>{
     const schema = Joi.object({
-        tname: Joi.string().required(),
-        temail: Joi.string().email().required(),
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
         contact: Joi.string().required(),
         state: Joi.string().required(),
         city: Joi.string().required(),
@@ -14,44 +117,47 @@ exports.teacherRegister = async(req,res)=>{
         teachingexp: Joi.string().required(),
         subjects: Joi.string().required(),
         qualification: Joi.string().required(),
-        modeofteaching: Joi.array().required(),
+        modeofteaching: Joi.string().required(),
         timing: Joi.string().required(),
         vehicle: Joi.string().required(),
         preferredlocation: Joi.optional(),
         charge: Joi.string().required(),
-        image:  Joi.optional(),
         chargeType: Joi.string().required(),
-        document: Joi.optional()
+        storageurl: Joi.optional(), 
+        imageurl:  Joi.optional(),
     })
        try{
-        const newTeacher = await schema.validateAsync(req.body);
-        await  RegisteredTeacher.create(req.body, (err,data)=>{
-             if(err)throw err
-              return res.status(200).json({ 'Status':200, 'message': 'Teacher profile created successfully', 'newteacher': data , status : 200});
-          })
-        
-
+        await schema.validateAsync(req.body);
+        let payload = req.body;
+        //check if image included in payload
+        if(req.file)     
+        payload.storageurl =  `Storage/images/${req.file.filename}`;
+        await  RegisteredTeacher.create(payload, (err,data)=>{
+            if(err)throw err
+             return res.status(200).json({ 'Status':200, 'message': 'Teacher profile created successfully', 'newteacher': data , status : 200});
+         })
+       
        }catch(err){
         return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
        }
 }
 
 //list of teachers
-exports.listofteachers = async(req,res)=>{
-    try {
-        await RegisteredTeacher.find((err, data)=>{
-            if(err)throw err
-            data.sort((a,b)=>{
-                return new Date(b.creation_dt) - new Date(a.creation_dt);
-              });
-            return res.status(200).json({ 'message': 'Teachers Fetched Successfully', 'listofteachers': data, status : 200});
+// exports.listofteachers = async(req,res)=>{
+//     try {
+//         await RegisteredTeacher.find((err, data)=>{
+//             if(err)throw err
+//             data.sort((a,b)=>{
+//                 return new Date(b.creation_dt) - new Date(a.creation_dt);
+//               });
+//             return res.status(200).json({ 'message': 'Teachers Fetched Successfully', 'listofteachers': data, status : 200});
             
-        })
+//         })
        
-    } catch (err) {
-        return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
-    }
-}
+//     } catch (err) {
+//         return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
+//     }
+// }
 
 //list of teachers by page
 exports.listofteachersbypage = async(req,res)=>{
@@ -70,8 +176,16 @@ exports.listofteachersbypage = async(req,res)=>{
             if(err)throw err
             data.sort((a,b)=>{
                 return new Date(b.creation_dt) - new Date(a.creation_dt);
-              });
-              RegisteredTeacher.count({},(count_error, count) => {
+            });
+            data.forEach(x => {
+                if(x.storageurl !== ''){
+                var getImageName = x.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
+                let url = `http://localhost:3000/uploads/${getImageName[1]}`;
+                x.imageurl = url;
+                }
+            })
+
+            RegisteredTeacher.count({},(count_error, count) => {
                 if (err) {
                   return res.json(count_error);
                 }
@@ -111,29 +225,56 @@ exports.singleteacher = async(req,res)=>{
 
 //update single teacher by teacher id
 exports.updateteacher = async (req,res)=>{
+    const schema = Joi.object({
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
+        contact: Joi.string().required(),
+        state: Joi.string().required(),
+        city: Joi.string().required(),
+        location: Joi.string().required(),
+        about: Joi.string().required(),
+        teachingexp: Joi.string().required(),
+        subjects: Joi.string().required(),
+        qualification: Joi.string().required(),
+        modeofteaching: Joi.string().required(),
+        timing: Joi.string().required(),
+        vehicle: Joi.string().required(),
+        preferredlocation: Joi.optional(),
+        charge: Joi.string().required(),
+        chargeType: Joi.string().required(),
+        storageurl: Joi.optional(), 
+        imageurl:  Joi.optional(),
+    })
+
+    await schema.validateAsync(req.body);
+    
+    const id = req.params.id;
+    let payload = req.body;
+     
+     //check if image included in payload
+     var storageUrl = '';
+     if(req.file){
+       let storageUrl = `Storage/images/${req.file.filename}`;
+       payload.storageurl = storageUrl;
+     
+        var getImageName = payload.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
+        let url = `http://localhost:3000/uploads/${getImageName[1]}`;
+        payload.imageurl = url;
+     
+     }
+
     try{
-        await RegisteredTeacher.findByIdAndUpdate(req.params.id,{
-            $set:{
-                tname: req.body.tname,
-                temail:req.body.temail,
-                password:req.body.password,
-                cpass:req.body.cpass,
-                tname: req.body.tname,
-                temail: req.bosy.temail,
-                contact: req.body.contact,
-                location: req.body.location,
-                about: req.body.about,
-                teachingexp: req.body.teachingexp,
-                qualification: req.body.qualification,
-                modeofteaching: req.body.modeofteaching,
-                timing: req.body.timing,
-                charge: req.body.charge,
-                image:  req.body.image,
-                uploadresume: req.body,uploadresume,
-                idproof: req.body.idproof,
-            }
-        })
-        return res.status(200).json({ 'message': 'Teacher updated successfully', 'updatedteacher':req.body})
+        const tInfo = await RegisteredTeacher.findById(id);
+        
+        if(!tInfo){
+               res.status(422);
+               throw new Error('Teacher not found')
+        }
+         else{
+             const data = await RegisteredTeacher.findByIdAndUpdate( req.params.id,payload,{new:true})
+             return res.status(200).json({ 'message': 'Teacher updated successfully', 'updatedteacher':data});
+         }
+        
 
     }catch (err) {
         console.log(err,'error')
@@ -198,7 +339,24 @@ exports.appliedteacher = async(req,res)=>{
      }catch(err) {
          return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
      }
+}
+
+//check Phone and Email Validation
+exports.checkPhoneandEmailValidation = async(req,res)=>{
+    console.log(req.params.value)
+     try {
+        let value = req.params.value;
+         await RegisteredTeacher.find(value.includes('@') ? {email: value} : {contact : value},(err, data)=>{
+             if(err)throw err
+             return res.status(409).json({ 'message': `Teacher with ${req.params.val} already exists`});
+             
+         })
+        
+     } catch (err) {
+         return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
+     }
  }
+
 
 //filter registered teacher
 exports.searchTeacher = async(req,res)=>{

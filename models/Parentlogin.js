@@ -9,4 +9,4 @@ const parentSchema = mongoose.Schema({
 },{timestamps:true, versionKey:false})
 
 
-module.exports = mongoose.model('parentregister', parentSchema);
+module.exports = mongoose.model('ParentLogin', parentSchema);

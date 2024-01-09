@@ -1,28 +1,28 @@
 const mongoose = require('mongoose');
 
-const parentSchema = mongoose.Schema({
-    name : {type:String, required:true},
-    email: {type:String, required:true},
-    contact:{type:String, required:true},
-    state:{type:String, required:true},
-    city:{type:String, required:true},
-    location:{type:String, required:true},
-    lookingfor:{type:String, required:true},
-    grade:{type:String, required:true},
-    board:{type:String, required:true},
-    subjects:{type:String, required:true},
+const parentRegisteredSchema = mongoose.Schema({
+    name : {type:String, required:['Name is required']},
+    email: {type:String, required:['Email is required']},
+    contact:{type:String, required:['Contact is required']},
+    state:{type:String, required:['State is required']},
+    city:{type:String, required:['City is required']},
+    location:{type:String, required:['Location is required']},
+    lookingfor:{type:String, required:['LookingFor is required']},
+    grade:{type:String, required:['Grade is required']},
+    board:{type:String, required:['Board is required']},
+    subjects:{type:String, required:['Subject is required']},
     details:{type:String},
-    modeofteaching:{type:String, required:true},
-    days : {type:String, required:true},
-    hours: {type:String, required:true},
-    time: {type:String, required:true},
-    gender:{type:String, required:true},
-    budget:{type:String, required:true},
-    budgettype:{type:String, required:true},
-    document:{type:String, required:false}, 
-    //imageUrl: {type:String, required:false}
+    modeofteaching:{type:String, required:['Modeofteaching is required']},
+    days : {type:String, required:['Days is required']},
+    hours: {type:String, required:['Hours is required']},
+    time: {type:String, required:['Time is required']},
+    gender:{type:String, required:['Gender is required']},
+    budget:{type:String, required:['Budget is required']},
+    budgettype:{type:String, required:['Budget Type is required']},
+    storageurl:{type:String, required:false}, 
+    imageurl: {type:String, required:false}
 },{timestamps:true, versionKey:false})
 
 
-module.exports = mongoose.model('parentprofiles', parentSchema);
+module.exports = mongoose.model('RegisteredParent', parentRegisteredSchema);
 

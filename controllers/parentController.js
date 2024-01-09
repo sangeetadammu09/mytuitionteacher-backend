@@ -5,6 +5,7 @@ const ParentLogin = require('../models/Parentlogin');
 const jwt = require ('jsonwebtoken');
 
 exports.parentregister = async(req,res)=> {
+
     try{
          const schema = Joi.object({
              name: Joi.string().required(),
@@ -43,7 +44,8 @@ exports.parentregister = async(req,res)=> {
               })
 
          }
-    }catch(err){
+    }
+    catch(err){
         return res.status(400).json({
             message: "Validation problem occured",
             error: err.message,
@@ -128,18 +130,17 @@ exports.parentcreate = async(req,res)=>{
         gender: Joi.string().required(),
         budget: Joi.number().required(),
         budgettype: Joi.string().required(),
-        document: Joi.optional(),
-        //imageUrl: Joi.optional()
+        storageurl: Joi.optional(),
+        imageurl: Joi.optional()
     })
 
-    //  console.log(req.body,'request')
+      console.log(req.body,'request')
        try{
         await schema.validateAsync(req.body);
         let payload = req.body;
         //check if image included in payload
         if(req.file)     
-        payload.document =  `Storage/images/${req.file.filename}`;
-      //  const userCreate = await User(payload).save();
+        payload.storageurl =  `Storage/images/${req.file.filename}`;
         await  Parent.create(payload, (err,data)=>{
              if(err)throw err
               return res.status(200).json({ 'message': 'Parent created successfully', 'parent': data, 'status':200 });
@@ -167,6 +168,7 @@ exports.parentcreate = async(req,res)=>{
 //     }
 // }
 
+
 //list of [arents by page
 exports.listofparentsbypage = async(req,res)=>{
     var pageNo = parseInt(req.body.startNumber)
@@ -184,6 +186,14 @@ exports.listofparentsbypage = async(req,res)=>{
                 data.sort((a,b)=>{
                     return new Date(b.creation_dt) - new Date(a.creation_dt);
                 });
+
+                data.forEach(x => {
+                if(x.storageurl !== ''){
+                var getImageName = x.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
+                let url = `http://localhost:3000/uploads/${getImageName[1]}`;
+                x.imageurl = url;
+                }
+                })
             
                 Parent.count({},(count_error, count) => {
                     if (err) {
@@ -223,27 +233,57 @@ exports.singleparent = async(req,res)=>{
 
 //update single parent by parent id
 exports.updateparent = async (req,res)=>{
+    const schema = Joi.object({
+        name: Joi.string().required(),
+        email: Joi.string().email().required(),
+        contact: Joi.string().required(),
+        state: Joi.string().required(),
+        city: Joi.string().required(),
+        location: Joi.string().required(),
+        lookingfor: Joi.string().required(),
+        grade: Joi.string().required(),
+        board: Joi.string().required(),
+        subjects: Joi.string().required(),
+        details: Joi.optional(),
+        modeofteaching: Joi.string().required(),
+        days : Joi.string().required(),
+        hours: Joi.string().required(),
+        time: Joi.string().required(),
+        gender: Joi.string().required(),
+        budget: Joi.number().required(),
+        budgettype: Joi.string().required(),
+        storageurl: Joi.optional(),
+        imageurl: Joi.optional()
+    })
+
+    await schema.validateAsync(req.body);
+    
+    const id = req.params.id;
+    let payload = req.body;
+     
+     //check if image included in payload
+     var storageUrl = '';
+     if(req.file){
+       let storageUrl = `Storage/images/${req.file.filename}`;
+       payload.storageurl = storageUrl;
+     
+        var getImageName = payload.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
+        let url = `http://localhost:3000/uploads/${getImageName[1]}`;
+        payload.imageurl = url;
+     
+     }
     try{
-        await Parent.findByIdAndUpdate(req.params.id,{
-            $set:{
-                pname: req.body.pname,
-                pemail: req.body.pemail ,
-                contact: req.body.contact ,
-                location: req.body.location ,
-                lookingfor: req.body.lookingfor,
-                grade: req.body.grade,
-                board: req.body.board,
-                subjects: req.body.subjects,
-                details: req.body.details,
-                modeofteaching: req.body.modeofteaching,
-                gender: req.body.gender ,
-                budget: req.body.budget,
-                budgettype: req.body.budgettype,
-                document:req.body.document ,
-                idproof:req.body.idproof ,
-            }
-        })
-        return res.status(200).json({ 'message': 'parent updated successfully', 'updatedparent':req.body})
+        const pInfo = await Parent.findById(id);
+        
+        if(!pInfo){
+               res.status(404);
+               throw new Error('Parent not found')
+        }
+         else{
+             const data = await Parent.findByIdAndUpdate( req.params.id,payload,{new:true})
+             return res.status(200).json({ 'message': 'parent updated successfully', 'updatedparent':data});
+         }
+       
 
     }catch (err) {
         console.log(err,'error')
@@ -263,3 +303,18 @@ exports.deleteparent = async(req,res)=>{
         return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
     }
 }
+
+//check Phone and Email Validation
+exports.checkPhoneandEmailValidation = async(req,res)=>{
+    // console.log(req.params.id)
+     try {
+         await Parent.findOne(req.params._id,(err, data)=>{
+             if(err)throw err
+             return res.status(200).json({ 'message': `Parent with ${req.params.id} already exists`});
+             
+         })
+        
+     } catch (err) {
+         return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
+     }
+ }
