@@ -1,114 +1,114 @@
 const Joi = require('joi');
-const bcrypt = require ('bcryptjs');
 const Parent = require('../models/Parent');
-const ParentLogin = require('../models/Parentlogin');
-const jwt = require ('jsonwebtoken');
 
-exports.parentregister = async(req,res)=> {
+//const bcrypt = require ('bcryptjs');
+// const ParentLogin = require('../models/Parentlogin');
+// const jwt = require ('jsonwebtoken');
+// exports.parentregister = async(req,res)=> {
 
-    try{
-         const schema = Joi.object({
-             name: Joi.string().required(),
-             email: Joi.string().email().required(),
-             password: Joi.string().required(),
-             cpass: Joi.string().required(),
-             isActive :Joi.boolean()
-         })
+//     try{
+//          const schema = Joi.object({
+//              name: Joi.string().required(),
+//              email: Joi.string().email().required(),
+//              password: Joi.string().required(),
+//              cpass: Joi.string().required(),
+//              isActive :Joi.boolean()
+//          })
         
-         const parentfields = await schema.validateAsync(req.body);
-         const salt = await bcrypt.genSalt(10);
-         parentfields.password = await bcrypt.hash (parentfields.password, salt);
+//          const parentfields = await schema.validateAsync(req.body);
+//          const salt = await bcrypt.genSalt(10);
+//          parentfields.password = await bcrypt.hash (parentfields.password, salt);
          
-         try{
-            let parent= await ParentLogin.findOne({email:parentfields.email})
-            console.log(parent,'parent')
-            if(!parent){
-                parent = new ParentLogin(parentfields);
-                await parent.save();
-                return res.status(200).json({
-                    message: "Parent registered successfully",
-                    regparent: parent,
-                    status: 'success'
+//          try{
+//             let parent= await ParentLogin.findOne({email:parentfields.email})
+//             console.log(parent,'parent')
+//             if(!parent){
+//                 parent = new ParentLogin(parentfields);
+//                 await parent.save();
+//                 return res.status(200).json({
+//                     message: "Parent registered successfully",
+//                     regparent: parent,
+//                     status: 'success'
 
-                })
-            }else {
-                return res.status(400).json({
-                  message: "Parent Already exists",
-                  status : "failed"
-                })
-            }
-         }catch(err){
-            return res.status(500).json({
-                message: "something went wrong",
-                error: err.message,
-              })
+//                 })
+//             }else {
+//                 return res.status(400).json({
+//                   message: "Parent Already exists",
+//                   status : "failed"
+//                 })
+//             }
+//          }catch(err){
+//             return res.status(500).json({
+//                 message: "something went wrong",
+//                 error: err.message,
+//               })
 
-         }
-    }
-    catch(err){
-        return res.status(400).json({
-            message: "Validation problem occured",
-            error: err.message,
-          })
-    }
-}
+//          }
+//     }
+//     catch(err){
+//         return res.status(400).json({
+//             message: "Validation problem occured",
+//             error: err.message,
+//           })
+//     }
+// }
 
-exports.parentlogin= async(req,res)=> {
+// exports.parentlogin= async(req,res)=> {
   
-    try{
-        const schema = Joi.object({
-          email: Joi.required(),
-          password: Joi.required()
-        })
+//     try{
+//         const schema = Joi.object({
+//           email: Joi.required(),
+//           password: Joi.required()
+//         })
 
-        const parentFields = await schema.validateAsync(req.body);
-        let parent = await ParentLogin.findOne({email:parentFields.email});
-        if(parent){
-            const isMatch = await bcrypt.compare(parentFields.password, parent.password)
+//         const parentFields = await schema.validateAsync(req.body);
+//         let parent = await ParentLogin.findOne({email:parentFields.email});
+//         if(parent){
+//             const isMatch = await bcrypt.compare(parentFields.password, parent.password)
         
-        if(isMatch){
-            const payload = {
-                parent: {
-                    id :parent._id
-                }
-            }
-            jwt.sign(payload, process.env.SECRET_KEY, (err, token) => {
-                if (err)
-                    throw err;
-                const loggedparent = { id: parent.id,name: parent.name, email: parent.email };
+//         if(isMatch){
+//             const payload = {
+//                 parent: {
+//                     id :parent._id
+//                 }
+//             }
+//             jwt.sign(payload, process.env.SECRET_KEY, (err, token) => {
+//                 if (err)
+//                     throw err;
+//                 const loggedparent = { id: parent.id,name: parent.name, email: parent.email };
 
-                return res.status(200).json({
-                    message: "Logged In succesfully",
-                    loggedparent: loggedparent,
-                    token: token
-                });
+//                 return res.status(200).json({
+//                     message: "Logged In succesfully",
+//                     loggedparent: loggedparent,
+//                     token: token
+//                 });
 
-            })
+//             })
             
-        }else{
-            return res.status (400).json({
-                message: "wrong username/password",
-                status: "failed",
-                error: err.message
-            })
-        }
+//         }else{
+//             return res.status (400).json({
+//                 message: "wrong username/password",
+//                 status: "failed",
+//                 error: err.message
+//             })
+//         }
 
-    }else{
-        return res.status (500).json({
-            message: "something wnet wrong",
-            status: "failed",
-            error: err.message
-        })
-    }
+//     }else{
+//         return res.status (500).json({
+//             message: "something wnet wrong",
+//             status: "failed",
+//             error: err.message
+//         })
+//     }
     
     
-}catch(err){
-    return res.status (400).json({
-        message: "Validation error",
-        error: err.message
-    })
-}
-}
+// }catch(err){
+//     return res.status (400).json({
+//         message: "Validation error",
+//         error: err.message
+//     })
+// }
+// }
 
 exports.parentcreate = async(req,res)=>{
     const schema = Joi.object({

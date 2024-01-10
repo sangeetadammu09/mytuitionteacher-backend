@@ -12,7 +12,8 @@ const auth = require('./middlewares/validateTokenHandler')
 const path = require('path');
 
 //routes
-var contactRoute = require ('./routes/contactRoute');
+const commonRoute = require ('./routes/commonRoute');
+const contactRoute = require ('./routes/contactRoute');
 const mailRoute = require('./routes/mailRoute')
 const parentRoute = require('./routes/parentRoute')
 const teacherRoute = require('./routes/teacherRoute')
@@ -39,6 +40,7 @@ app.use(cors({origin:'*',credentials:true}));
 
 //static image for user
 app.use('/uploads', express.static('Storage/images'));
+app.use('/', commonRoute);
 app.use('/mail', mailRoute);
 app.use('/contact', contactRoute);
 app.use('/parent',parentRoute)

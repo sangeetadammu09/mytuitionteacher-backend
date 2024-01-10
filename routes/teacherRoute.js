@@ -4,10 +4,9 @@ const validateToken = require('../middlewares/validateTokenHandler');
 const fileUpload = require('../Utils/fileUpload');
 const router = express.Router();
 
-//teacher login
-router.post('/register',teacherController.teacherregister);
+// router.post('/register',teacherController.teacherregister);
 
-router.post('/login',teacherController.teacherlogin);
+// router.post('/login',teacherController.teacherlogin);
 
 router.post('/form',fileUpload("./Storage/images"),teacherController.createteacher);
 

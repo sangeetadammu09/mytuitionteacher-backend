@@ -1,109 +1,109 @@
 const Joi = require('joi');
 const RegisteredTeacher = require('../models/Teacher');
 const TeacherHistory = require('../models/teacherHistoryModel')
-const TeacherLogin = require('../models/TeacherLogin');
-const bcrypt = require ('bcryptjs');
-const jwt = require ('jsonwebtoken');
+// const TeacherLogin = require('../models/TeacherLogin');
+// const bcrypt = require ('bcryptjs');
+// const jwt = require ('jsonwebtoken');
 
-exports.teacherregister = async(req,res)=> {
-    try{
-         const schema = Joi.object({
-             name: Joi.string().required(),
-             email: Joi.string().email().required(),
-             password: Joi.string().required(),
-             cpass: Joi.string().required(),
-             isActive :Joi.boolean()
-         })
-         const teacherfields = await schema.validateAsync(req.body);
-         const salt = await bcrypt.genSalt(10);
-         teacherfields.password = await bcrypt.hash (teacherfields.password, salt);
+// exports.teacherregister = async(req,res)=> {
+//     try{
+//          const schema = Joi.object({
+//              name: Joi.string().required(),
+//              email: Joi.string().email().required(),
+//              password: Joi.string().required(),
+//              cpass: Joi.string().required(),
+//              isActive :Joi.boolean()
+//          })
+//          const teacherfields = await schema.validateAsync(req.body);
+//          const salt = await bcrypt.genSalt(10);
+//          teacherfields.password = await bcrypt.hash (teacherfields.password, salt);
 
-         try{
-            let teacher= await TeacherLogin.findOne({email:teacherfields.email})
-            if(!teacher){
-                teacher = new TeacherLogin(teacherfields);
-                await teacher.save();
-                return res.status(200).json({
-                    message: "Teacher registered successfully",
-                    regteacher: teacher,
-                    status: 'success'
+//          try{
+//             let teacher= await TeacherLogin.findOne({email:teacherfields.email})
+//             if(!teacher){
+//                 teacher = new TeacherLogin(teacherfields);
+//                 await teacher.save();
+//                 return res.status(200).json({
+//                     message: "Teacher registered successfully",
+//                     regteacher: teacher,
+//                     status: 'success'
 
-                })
-            }else {
-                return res.status(400).json({
-                  message: "Teacher Already exists",
-                  status : "failed"
-                })
-            }
-         }catch(err){
-            return res.status(500).json({
-                message: "something went wrong",
-                error: err.message,
-              })
+//                 })
+//             }else {
+//                 return res.status(400).json({
+//                   message: "Teacher Already exists",
+//                   status : "failed"
+//                 })
+//             }
+//          }catch(err){
+//             return res.status(500).json({
+//                 message: "something went wrong",
+//                 error: err.message,
+//               })
 
-         }
-    }catch(err){
-        return res.status(500).json({
-            message: "Validation problem occured",
-            error: err.message,
-          })
-    }
-}
+//          }
+//     }catch(err){
+//         return res.status(500).json({
+//             message: "Validation problem occured",
+//             error: err.message,
+//           })
+//     }
+// }
 
-exports.teacherlogin= async(req,res)=> {
+// exports.teacherlogin= async(req,res)=> {
   
-    try{
-        const schema = Joi.object({
-          email: Joi.required(),
-          password: Joi.required()
-        })
+//     try{
+//         const schema = Joi.object({
+//           email: Joi.required(),
+//           password: Joi.required()
+//         })
 
-        const teacherfields = await schema.validateAsync(req.body);
-        let teacher = await TeacherLogin.findOne({email:teacherfields.email});
-        if(teacher){
-            const isMatch = await bcrypt.compare(teacherfields.password, teacher.password)
+//         const teacherfields = await schema.validateAsync(req.body);
+//         let teacher = await TeacherLogin.findOne({email:teacherfields.email});
+//         if(teacher){
+//             const isMatch = await bcrypt.compare(teacherfields.password, teacher.password)
         
-        if(isMatch){
-            const payload = {
-                teacher: {
-                    id :teacher._id
-                }
-            }
-            jwt.sign(payload,process.env.SECRET_KEY, (err, token) => {
-                if (err)
-                    throw err;
-                const loggedteacher = { teacherid: teacher.id,teachername: teacher.name, teacheremail: teacher.email };
+//         if(isMatch){
+//             const payload = {
+//                 teacher: {
+//                     id :teacher._id
+//                 }
+//             }
+//             jwt.sign(payload,process.env.SECRET_KEY, (err, token) => {
+//                 if (err)
+//                     throw err;
+//                 const loggedteacher = { teacherid: teacher.id,teachername: teacher.name, teacheremail: teacher.email };
 
-                return res.status(200).json({
-                    message: "Teacher Logged In succesfully",
-                    loggedteacher: loggedteacher,
-                    token: token
-                });
+//                 return res.status(200).json({
+//                     message: "Teacher Logged In succesfully",
+//                     loggedteacher: loggedteacher,
+//                     token: token
+//                 });
 
-            })
+//             })
             
-        }else{
-            return res.status (422).json({
-                message: "wrong username/password",
-                status: "failed"
-            })
-        }
+//         }else{
+//             return res.status (422).json({
+//                 message: "wrong username/password",
+//                 status: "failed"
+//             })
+//         }
 
-    }else{
-        return res.status (422).json({
-            message: "wrong username/password",
-            status: "failed"
-        })
-    }
+//     }else{
+//         return res.status (422).json({
+//             message: "wrong username/password",
+//             status: "failed"
+//         })
+//     }
     
     
-}catch(err){
-    return res.status (400).json({
-        message: "Validation error",
-        error: err.message
-    })
-}
-}
+// }catch(err){
+//     return res.status (400).json({
+//         message: "Validation error",
+//         error: err.message
+//     })
+// }
+// }
 
 exports.createteacher = async(req,res)=>{
     const schema = Joi.object({
