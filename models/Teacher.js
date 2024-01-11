@@ -17,7 +17,8 @@ const teacherRegisterSchema = mongoose.Schema({
     chargeType:{type:String, required:['Charge Type is required']},
     subjects:{type:String, required:['Subjects is required']},
     storageurl:{type:String, required:false}, 
-    imageurl: {type:String, required:false}
+    imageurl: {type:String, required:false},
+    isActive:{type:Boolean, required:true}
 },{timestamps:true,versionKey:false})
 
 

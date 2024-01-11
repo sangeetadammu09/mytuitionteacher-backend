@@ -5,17 +5,20 @@ const jwt = require ('jsonwebtoken');
 
 
 exports.register = async(req,res)=> {
-
     try{
          const schema = Joi.object({
              firstname: Joi.string().required(),
              lastname: Joi.string().required(),
              email: Joi.string().email().required(),
              mobile: Joi.string().required(),
+             location : Joi.string().required(),
              password: Joi.string().required(),
              cpass: Joi.string().required(),
              role : Joi.string().required(),
-             isActive :Joi.boolean()
+             sociallinks:  Joi.string().required(),
+             isActive :Joi.boolean().required(),
+             storageurl: Joi.optional(),
+             imageurl: Joi.optional()
          })
        
          const commonFields = await schema.validateAsync(req.body);
@@ -24,7 +27,18 @@ exports.register = async(req,res)=> {
          
          try{
             let common= await Common.findOne({email: commonFields.email})
-            //console.log(common,'user')
+            //console.log(common,'user');
+
+            //check if image included in payload
+            if(req.file){
+            let storageUrl = `Storage/images/${req.file.filename}`;
+            payload.storageurl = storageUrl;
+            
+                var getImageName = payload.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
+                let url = `http://localhost:8080/uploads/${getImageName[1]}`;
+                payload.imageurl = url;
+            
+            }
             if(!common){
                 common = new Common(commonFields);
                 await common.save();
@@ -118,3 +132,70 @@ exports.login= async(req,res)=> {
     })
 }
 }
+
+//get single user
+exports.singleuser = async(req,res)=>{
+    // console.log(req.params.id)
+     try {
+         await Common.findById(req.params.id,(err, data)=>{
+             if(err)throw err
+             return res.status(200).json({ status: 200, 'message': `User with ${req.params.id} fetched successfully`, 'singleuser': data });
+             
+         })
+        
+     } catch (err) {
+         return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
+     }
+ }
+ 
+ //update user by id
+ exports.updateuser = async (req,res)=>{
+     const schema = Joi.object({
+        firstname: Joi.string().required(),
+        lastname: Joi.string().required(),
+        email: Joi.string().email().required(),
+        mobile: Joi.string().required(),
+        location : Joi.string().required(),
+        password: Joi.string().required(),
+        cpass: Joi.string().required(),
+        role : Joi.string().required(),
+        sociallinks:  Joi.string().required(),
+        isActive :Joi.boolean().required(),
+        storageurl: Joi.optional(),
+        imageurl: Joi.optional()
+     })
+ 
+     await schema.validateAsync(req.body);
+     
+     const id = req.params.id;
+     let payload = req.body;
+      
+      //check if image included in payload
+      var storageUrl = '';
+      if(req.file){
+        let storageUrl = `Storage/images/${req.file.filename}`;
+        payload.storageurl = storageUrl;
+      
+         var getImageName = payload.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
+         let url = `http://localhost:8080/uploads/${getImageName[1]}`;
+         payload.imageurl = url;
+      
+      }
+     try{
+         const userInfo = await Common.findById(id);
+         
+         if(!userInfo){
+                res.status(404);
+                throw new Error('User not found')
+         }
+          else{
+              const data = await Common.findByIdAndUpdate( req.params.id,payload,{new:true})
+              return res.status(200).json({ status:200, 'message': 'User updated successfully', 'updateduser':data});
+          }
+        
+ 
+     }catch (err) {
+         console.log(err,'error')
+         return res.status(500).json({ status:500, 'message': 'something went wrong', 'err': err.message })
+     }
+ }

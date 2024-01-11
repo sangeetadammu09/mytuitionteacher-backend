@@ -19,8 +19,9 @@ const parentRegisteredSchema = mongoose.Schema({
     gender:{type:String, required:['Gender is required']},
     budget:{type:String, required:['Budget is required']},
     budgettype:{type:String, required:['Budget Type is required']},
-    storageurl:{type:String, required:false}, 
-    imageurl: {type:String, required:false}
+    storageurl:{type:String, required:false},
+    imageurl: {type:String, required:false},
+    isActive:{type:Boolean, required:true}
 },{timestamps:true, versionKey:false})
 
 

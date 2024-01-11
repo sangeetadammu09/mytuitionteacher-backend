@@ -130,6 +130,7 @@ exports.parentcreate = async(req,res)=>{
         gender: Joi.string().required(),
         budget: Joi.number().required(),
         budgettype: Joi.string().required(),
+        isActive :Joi.boolean().required(),
         storageurl: Joi.optional(),
         imageurl: Joi.optional()
     })
@@ -190,7 +191,7 @@ exports.listofparentsbypage = async(req,res)=>{
                 data.forEach(x => {
                 if(x.storageurl !== ''){
                 var getImageName = x.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
-                let url = `http://localhost:3000/uploads/${getImageName[1]}`;
+                let url = `http://localhost:8080/uploads/${getImageName[1]}`;
                 x.imageurl = url;
                 }
                 })
@@ -252,6 +253,7 @@ exports.updateparent = async (req,res)=>{
         gender: Joi.string().required(),
         budget: Joi.number().required(),
         budgettype: Joi.string().required(),
+        isActive :Joi.boolean().required(),
         storageurl: Joi.optional(),
         imageurl: Joi.optional()
     })
@@ -268,7 +270,7 @@ exports.updateparent = async (req,res)=>{
        payload.storageurl = storageUrl;
      
         var getImageName = payload.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
-        let url = `http://localhost:3000/uploads/${getImageName[1]}`;
+        let url = `http://localhost:8080/uploads/${getImageName[1]}`;
         payload.imageurl = url;
      
      }

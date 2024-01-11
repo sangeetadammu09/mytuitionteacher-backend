@@ -123,6 +123,7 @@ exports.createteacher = async(req,res)=>{
         preferredlocation: Joi.optional(),
         charge: Joi.string().required(),
         chargeType: Joi.string().required(),
+        isActive :Joi.boolean().required(),
         storageurl: Joi.optional(), 
         imageurl:  Joi.optional(),
     })
@@ -180,7 +181,7 @@ exports.listofteachersbypage = async(req,res)=>{
             data.forEach(x => {
                 if(x.storageurl !== ''){
                 var getImageName = x.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
-                let url = `http://localhost:3000/uploads/${getImageName[1]}`;
+                let url = `http://localhost:8080/uploads/${getImageName[1]}`;
                 x.imageurl = url;
                 }
             })
@@ -242,6 +243,7 @@ exports.updateteacher = async (req,res)=>{
         preferredlocation: Joi.optional(),
         charge: Joi.string().required(),
         chargeType: Joi.string().required(),
+        isActive :Joi.boolean().required(),
         storageurl: Joi.optional(), 
         imageurl:  Joi.optional(),
     })
@@ -258,7 +260,7 @@ exports.updateteacher = async (req,res)=>{
        payload.storageurl = storageUrl;
      
         var getImageName = payload.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
-        let url = `http://localhost:3000/uploads/${getImageName[1]}`;
+        let url = `http://localhost:8080/uploads/${getImageName[1]}`;
         payload.imageurl = url;
      
      }
