@@ -1,117 +1,10 @@
 const Joi = require('joi');
 const Parent = require('../models/Parent');
 
-//const bcrypt = require ('bcryptjs');
-// const ParentLogin = require('../models/Parentlogin');
-// const jwt = require ('jsonwebtoken');
-// exports.parentregister = async(req,res)=> {
-
-//     try{
-//          const schema = Joi.object({
-//              name: Joi.string().required(),
-//              email: Joi.string().email().required(),
-//              password: Joi.string().required(),
-//              cpass: Joi.string().required(),
-//              isActive :Joi.boolean()
-//          })
-        
-//          const parentfields = await schema.validateAsync(req.body);
-//          const salt = await bcrypt.genSalt(10);
-//          parentfields.password = await bcrypt.hash (parentfields.password, salt);
-         
-//          try{
-//             let parent= await ParentLogin.findOne({email:parentfields.email})
-//             console.log(parent,'parent')
-//             if(!parent){
-//                 parent = new ParentLogin(parentfields);
-//                 await parent.save();
-//                 return res.status(200).json({
-//                     message: "Parent registered successfully",
-//                     regparent: parent,
-//                     status: 'success'
-
-//                 })
-//             }else {
-//                 return res.status(400).json({
-//                   message: "Parent Already exists",
-//                   status : "failed"
-//                 })
-//             }
-//          }catch(err){
-//             return res.status(500).json({
-//                 message: "something went wrong",
-//                 error: err.message,
-//               })
-
-//          }
-//     }
-//     catch(err){
-//         return res.status(400).json({
-//             message: "Validation problem occured",
-//             error: err.message,
-//           })
-//     }
-// }
-
-// exports.parentlogin= async(req,res)=> {
-  
-//     try{
-//         const schema = Joi.object({
-//           email: Joi.required(),
-//           password: Joi.required()
-//         })
-
-//         const parentFields = await schema.validateAsync(req.body);
-//         let parent = await ParentLogin.findOne({email:parentFields.email});
-//         if(parent){
-//             const isMatch = await bcrypt.compare(parentFields.password, parent.password)
-        
-//         if(isMatch){
-//             const payload = {
-//                 parent: {
-//                     id :parent._id
-//                 }
-//             }
-//             jwt.sign(payload, process.env.SECRET_KEY, (err, token) => {
-//                 if (err)
-//                     throw err;
-//                 const loggedparent = { id: parent.id,name: parent.name, email: parent.email };
-
-//                 return res.status(200).json({
-//                     message: "Logged In succesfully",
-//                     loggedparent: loggedparent,
-//                     token: token
-//                 });
-
-//             })
-            
-//         }else{
-//             return res.status (400).json({
-//                 message: "wrong username/password",
-//                 status: "failed",
-//                 error: err.message
-//             })
-//         }
-
-//     }else{
-//         return res.status (500).json({
-//             message: "something wnet wrong",
-//             status: "failed",
-//             error: err.message
-//         })
-//     }
-    
-    
-// }catch(err){
-//     return res.status (400).json({
-//         message: "Validation error",
-//         error: err.message
-//     })
-// }
-// }
 
 exports.parentcreate = async(req,res)=>{
     const schema = Joi.object({
+        parentid: Joi.string().required(),
         name: Joi.string().required(),
         email: Joi.string().email().required(),
         contact: Joi.string().required(),
@@ -171,7 +64,7 @@ exports.parentcreate = async(req,res)=>{
 
 
 //list of [arents by page
-exports.listofparentsbypage = async(req,res)=>{
+exports.listofparents = async(req,res)=>{
     var pageNo = parseInt(req.body.startNumber)
      var size = parseInt(req.body.pageSize)
      var query = {}
@@ -180,7 +73,8 @@ exports.listofparentsbypage = async(req,res)=>{
              return res.json(response)
      }
      query.skip = size * (pageNo - 1)
-     query.limit = size
+     query.limit = size;
+     console.log(query,'query')
         try {
             await Parent.find({},{},query,(err, data)=>{
                 if(err)throw err
@@ -189,14 +83,62 @@ exports.listofparentsbypage = async(req,res)=>{
                 });
 
                 data.forEach(x => {
-                if(x.storageurl !== ''){
+                if(x.storageurl){
                 var getImageName = x.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
                 let url = `http://localhost:8080/uploads/${getImageName[1]}`;
                 x.imageurl = url;
                 }
                 })
             
-                Parent.count({},(count_error, count) => {
+                Parent.countDocuments({},(count_error, count) => {
+                    if (err) {
+                      return res.json(count_error);
+                    }
+                    return res.json({
+                      'message': 'Parents Fetched Successfully',
+                      total: count,
+                      page: pageNo,
+                      pageSize: data.length,
+                      'listofparents': data,
+                      status: 200
+                    });
+                  });
+                
+            })
+            
+        }catch(err){
+            return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
+        }
+}
+
+//list of tutions by parent id
+exports.tuitionlistbyparentid = async(req,res)=>{
+    var pageNo = parseInt(req.body.startNumber)
+     var size = parseInt(req.body.pageSize)
+     var query = {}
+     if(pageNo < 0 || pageNo === 0) {
+             response = {"error" : true,"message" : "invalid page number, should start with 1"};
+             return res.json(response)
+     }
+     query.skip = size * (pageNo - 1)
+     query.limit = size;
+    // query.parentid = req.params.parentid;
+        try {
+            await Parent.find({parentid: req.params.id}, {},query,(err, data)=>{
+                if(err)throw err
+                data.sort((a,b)=>{
+                    return new Date(b.creation_dt) - new Date(a.creation_dt);
+                });
+                
+                data.forEach(x => {
+                if(x.storageurl){
+                var getImageName = x.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
+                let url = `http://localhost:8080/uploads/${getImageName[1]}`;
+                x.imageurl = url;
+                }
+                })
+            
+                Parent.countDocuments({},(count_error, count) => {
                     if (err) {
                       return res.json(count_error);
                     }
@@ -232,9 +174,11 @@ exports.singleparent = async(req,res)=>{
     }
 }
 
+
 //update single parent by parent id
 exports.updateparent = async (req,res)=>{
     const schema = Joi.object({
+        parentid: Joi.string().required(),
         name: Joi.string().required(),
         email: Joi.string().email().required(),
         contact: Joi.string().required(),

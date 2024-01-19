@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const parentRegisteredSchema = mongoose.Schema({
+    parentid: {type:String},
     name : {type:String, required:['Name is required']},
     email: {type:String, required:['Email is required']},
     contact:{type:String, required:['Contact is required']},
