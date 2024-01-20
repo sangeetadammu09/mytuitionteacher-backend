@@ -1,7 +1,6 @@
 const Joi = require('joi');
 const Parent = require('../models/Parent');
 
-
 exports.parentcreate = async(req,res)=>{
     const schema = Joi.object({
         parentid: Joi.string().required(),
@@ -173,7 +172,6 @@ exports.singleparent = async(req,res)=>{
         return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
     }
 }
-
 
 //update single parent by parent id
 exports.updateparent = async (req,res)=>{

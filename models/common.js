@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const commonSchema = mongoose.Schema({
     firstname : {type:String, required:['First Name is required']},
-    lastname : {type:String, required:['?Last Name is required']},
+    lastname : {type:String, required:['Last Name is required']},
     email: {type:String, required:['Email is required']},
     mobile: {type:String, required:['Mobile is required']},
     location: {type:String, required:['Location is required']},

@@ -17,6 +17,7 @@ const contactRoute = require ('./routes/contactRoute');
 const mailRoute = require('./routes/mailRoute')
 const parentRoute = require('./routes/parentRoute')
 const teacherRoute = require('./routes/teacherRoute')
+const feedbackRoute = require('./routes/feedbackRoute')
 const superAdminRoute = require('./routes/superadminRoute')
 const subAdminRoute = require('./routes/subadminRoute')
 
@@ -45,6 +46,7 @@ app.use('/mail', mailRoute);
 app.use('/contact', contactRoute);
 app.use('/parent',parentRoute)
 app.use('/teacher',teacherRoute)
+app.use('/feedback',feedbackRoute)
 app.use('/superadmin',superAdminRoute)
 app.use('/subadmin',subAdminRoute);
 //multer error handling

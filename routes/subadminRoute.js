@@ -3,9 +3,9 @@ const subAdminController = require ('../controllers/subAdminController');
 const validateToken = require ('../middlewares/validateTokenHandler')
 const router = express.Router();
 
-router.post('/form',validateToken,subAdminController.register);
+//router.post('/form',validateToken,subAdminController.register);
 
-router.post('/login',subAdminController.login);
+//router.post('/login',subAdminController.login);
 
 router.get('/listofsubAdmin',validateToken,subAdminController.listofsubAdmin);
 
