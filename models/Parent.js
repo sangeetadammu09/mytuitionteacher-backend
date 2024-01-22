@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const parentRegisteredSchema = mongoose.Schema({
+const tuitionRegisteredSchema = mongoose.Schema({
     parentid: {type:String},
     name : {type:String, required:['Name is required']},
     email: {type:String, required:['Email is required']},
@@ -22,9 +22,11 @@ const parentRegisteredSchema = mongoose.Schema({
     budgettype:{type:String, required:['Budget Type is required']},
     storageurl:{type:String, required:false},
     imageurl: {type:String, required:false},
-    isActive:{type:Boolean, required:true}
+    isActive:{type:Boolean, required:true},
+    isTeacherAssigned:{type:Boolean, default:false},
+    status:{type:String, default: 'open'},
 },{timestamps:true, versionKey:false})
 
 
-module.exports = mongoose.model('RegisteredParent', parentRegisteredSchema);
+module.exports = mongoose.model('RegisteredTuition', tuitionRegisteredSchema);
 

@@ -6,13 +6,13 @@ const validateToken = require('../middlewares/validateTokenHandler');
 
 router.post('/form',fileUpload("./Storage/images"),parentController.parentcreate);
 
-router.put('/update/:id', fileUpload("./Storage/images"),parentController.updateparent);
-
-router.post('/listofparents',validateToken,parentController.listofparents);
+router.post('/listoftuitions',validateToken,parentController.listoftuitions);
 
 router.post('/listoftuitionsbyparentid/:id',validateToken, parentController.tuitionlistbyparentid);
 
 router.get('/:id',validateToken, parentController.singleparent);
+
+router.put('/update/:id', fileUpload("./Storage/images"),parentController.updateparent);
 
 router.get('/check/:id', parentController.checkPhoneandEmailValidation)
 

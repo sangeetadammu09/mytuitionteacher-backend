@@ -23,11 +23,11 @@ exports.parentcreate = async(req,res)=>{
         budget: Joi.number().required(),
         budgettype: Joi.string().required(),
         isActive :Joi.boolean().required(),
+        status: Joi.optional(),
+        isTeacherAssigned: Joi.optional(),
         storageurl: Joi.optional(),
         imageurl: Joi.optional()
     })
-
-      console.log(req.body,'request')
        try{
         await schema.validateAsync(req.body);
         let payload = req.body;
@@ -36,7 +36,7 @@ exports.parentcreate = async(req,res)=>{
         payload.storageurl =  `Storage/images/${req.file.filename}`;
         await  Parent.create(payload, (err,data)=>{
              if(err)throw err
-              return res.status(200).json({ 'message': 'Parent created successfully', 'parent': data, 'status':200 });
+              return res.status(200).json({ 'message': 'Parent created successfully', 'data': data, 'status':200 });
           })
 
        }catch(err){
@@ -62,8 +62,8 @@ exports.parentcreate = async(req,res)=>{
 // }
 
 
-//list of [arents by page
-exports.listofparents = async(req,res)=>{
+//list of parents by page
+exports.listoftuitions = async(req,res)=>{
     var pageNo = parseInt(req.body.startNumber)
      var size = parseInt(req.body.pageSize)
      var query = {}
@@ -98,7 +98,7 @@ exports.listofparents = async(req,res)=>{
                       total: count,
                       page: pageNo,
                       pageSize: data.length,
-                      'listofparents': data,
+                      'data': data,
                       status: 200
                     });
                   });
@@ -146,7 +146,7 @@ exports.tuitionlistbyparentid = async(req,res)=>{
                       total: count,
                       page: pageNo,
                       pageSize: data.length,
-                      'listofparents': data,
+                      'data': data,
                       status: 200
                     });
                   });
@@ -173,7 +173,7 @@ exports.singleparent = async(req,res)=>{
     }
 }
 
-//update single parent by parent id
+//update parent by parent id
 exports.updateparent = async (req,res)=>{
     const schema = Joi.object({
         parentid: Joi.string().required(),
@@ -196,6 +196,8 @@ exports.updateparent = async (req,res)=>{
         budget: Joi.number().required(),
         budgettype: Joi.string().required(),
         isActive :Joi.boolean().required(),
+        status: Joi.optional(),
+        isTeacherAssigned: Joi.optional(),
         storageurl: Joi.optional(),
         imageurl: Joi.optional()
     })
@@ -204,6 +206,7 @@ exports.updateparent = async (req,res)=>{
     
     const id = req.params.id;
     let payload = req.body;
+    console.log(payload)
      
      //check if image included in payload
      var storageUrl = '';
@@ -225,7 +228,7 @@ exports.updateparent = async (req,res)=>{
         }
          else{
              const data = await Parent.findByIdAndUpdate( req.params.id,payload,{new:true})
-             return res.status(200).json({ 'message': 'parent updated successfully', 'updatedparent':data});
+             return res.status(200).json({ 'message': 'parent updated successfully', 'data':data});
          }
        
 
@@ -235,12 +238,12 @@ exports.updateparent = async (req,res)=>{
     }
 }
 
-//delete single parent
+//delete parent
 exports.deleteparent = async(req,res)=>{
     try{
         await Parent.findByIdAndDelete(req.params.id,(err,data)=>{
             if(err)throw err
-            return res.status(200).json({'message':'parent deleted successfully', 'deletedparent':data})
+            return res.status(200).json({status : 200, 'message':'parent deleted successfully',})
         })
 
     }catch (err) {
