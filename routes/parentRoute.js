@@ -6,9 +6,11 @@ const validateToken = require('../middlewares/validateTokenHandler');
 
 router.post('/form',fileUpload("./Storage/images"),parentController.parentcreate);
 
-router.post('/listoftuitions',validateToken,parentController.listoftuitions);
+router.post('/listoftuitions',parentController.listoftuitions);
 
-router.post('/listoftuitionsbyparentid/:id',validateToken, parentController.tuitionlistbyparentid);
+router.post('/listoftuitionsbyid/:id',validateToken, parentController.tuitionlistbyid);
+
+router.post('/search',validateToken, parentController.search);
 
 router.get('/:id',validateToken, parentController.singleparent);
 

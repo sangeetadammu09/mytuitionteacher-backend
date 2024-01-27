@@ -111,7 +111,7 @@ exports.listoftuitions = async(req,res)=>{
 }
 
 //list of tutions by parent id
-exports.tuitionlistbyparentid = async(req,res)=>{
+exports.tuitionlistbyid = async(req,res)=>{
     var pageNo = parseInt(req.body.startNumber)
      var size = parseInt(req.body.pageSize)
      var query = {}
@@ -121,9 +121,10 @@ exports.tuitionlistbyparentid = async(req,res)=>{
      }
      query.skip = size * (pageNo - 1)
      query.limit = size;
+     let reqparams = {parentid: req.params.id};
     // query.parentid = req.params.parentid;
         try {
-            await Parent.find({parentid: req.params.id}, {},query,(err, data)=>{
+            await Parent.find(reqparams, {},query,(err, data)=>{
                 if(err)throw err
                 data.sort((a,b)=>{
                     return new Date(b.creation_dt) - new Date(a.creation_dt);
@@ -157,6 +158,65 @@ exports.tuitionlistbyparentid = async(req,res)=>{
             return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
         }
 }
+
+//filter registered teacher
+exports.search = async(req,res)=>{
+     // console.log('request',req.body);
+        let payload = req.body.filterCondition;
+        var pageNo = parseInt(req.body.pagination.startNumber)
+        var size = parseInt(req.body.pagination.pageSize)
+        var query = {}
+        if(pageNo < 0 || pageNo === 0) {
+                response = {"error" : true,"message" : "invalid page number, should start with 1"};
+                return res.json(response)
+        }
+        query.skip = size * (pageNo - 1)
+        query.limit = size;
+
+      let filterCond = {};
+      let arr = [];
+        arr.push(payload);
+        for (let x in payload) {
+                if (payload[x]) {
+                    filterCond[x] = { $regex: payload[x] };
+                }
+        }
+    
+         try {
+            await Parent.find({"$or":[filterCond]}, {},query,(err, data)=>{
+                if(err)throw err
+                data.sort((a,b)=>{
+                    return new Date(b.creation_dt) - new Date(a.creation_dt);
+                });
+                
+                data.forEach(x => {
+                if(x.storageurl){
+                var getImageName = x.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
+                let url = `http://localhost:8080/uploads/${getImageName[1]}`;
+                x.imageurl = url;
+                }
+                })
+            
+                Parent.countDocuments({"$or":[filterCond]},(count_error, count) => {
+                    if (err) {
+                      return res.json(count_error);
+                    }
+                    return res.json({
+                      total: count,
+                      page: pageNo,
+                      pageSize: data.length,
+                      'data': data,
+                      status: 200
+                    });
+                  });
+                
+            })
+            
+        }catch(err){
+            return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
+        }
+    
+  }
 
 //get single parent
 exports.singleparent = async(req,res)=>{
@@ -228,7 +288,7 @@ exports.updateparent = async (req,res)=>{
         }
          else{
              const data = await Parent.findByIdAndUpdate( req.params.id,payload,{new:true})
-             return res.status(200).json({ 'message': 'parent updated successfully', 'data':data});
+             return res.status(200).json({ "status": 200, 'message': 'parent updated successfully', 'data':data});
          }
        
 

@@ -263,8 +263,8 @@ exports.searchTeacher = async(req,res)=>{
    //  console.log('request',req.body)// tname,qualification,state,city,subjects,modeofteaching
      let filterCond = {};
 
-        if (req.body.tname) {
-            filterCond.tname = { $regex: req.body.tname };
+        if (req.body.name) {
+            filterCond.tname = { $regex: req.body.name };
         }
         if (req.body.qualification) {
             filterCond.qualification = { $regex: req.body.qualification };

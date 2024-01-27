@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const tuitionRegisteredSchema = mongoose.Schema({
-    parentid: {type:String},
     name : {type:String, required:['Name is required']},
     email: {type:String, required:['Email is required']},
     contact:{type:String, required:['Contact is required']},
@@ -23,7 +22,9 @@ const tuitionRegisteredSchema = mongoose.Schema({
     storageurl:{type:String, required:false},
     imageurl: {type:String, required:false},
     isActive:{type:Boolean, required:true},
-    isTeacherAssigned:{type:Boolean, default:false},
+    parentid: {type:String,required:false},
+    teacherid: {type:String,required:false},
+    isTeacherAssigned:{type:Boolean, default:false},  
     status:{type:String, default: 'open'},
 },{timestamps:true, versionKey:false})
 
