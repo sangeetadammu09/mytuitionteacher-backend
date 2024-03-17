@@ -163,8 +163,8 @@ exports.tuitionlistbyid = async(req,res)=>{
 exports.search = async(req,res)=>{
      // console.log('request',req.body);
         let payload = req.body.filterCondition;
-        var pageNo = parseInt(req.body.pagination.startNumber)
-        var size = parseInt(req.body.pagination.pageSize)
+        var pageNo = parseInt(req.body.startNumber)
+        var size = parseInt(req.body.pageSize)
         var query = {}
         if(pageNo < 0 || pageNo === 0) {
                 response = {"error" : true,"message" : "invalid page number, should start with 1"};
@@ -216,7 +216,7 @@ exports.search = async(req,res)=>{
             return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
         }
     
-  }
+}
 
 //get single parent
 exports.singleparent = async(req,res)=>{
