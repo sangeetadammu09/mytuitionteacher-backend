@@ -81,7 +81,7 @@ exports.login = async (req, res) => {
         })
         const commonFields = await schema.validateAsync(req.body);
         let common = await Common.findOne({ email: commonFields.email });
-        console.log(common)
+    //    console.log(common)
         if (common) {
             const isMatch = await bcrypt.compare(commonFields.password, common.password)
             console.log(isMatch,'match')
