@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const Joi = require('joi');
-const Common = require('../models/common');
+const Admin = require('../models/admin');
 const jwt = require('jsonwebtoken');
 
 
@@ -18,7 +18,9 @@ exports.register = async (req, res) => {
             sociallinks: Joi.string().required(),
             isActive: Joi.boolean().required(),
             storageurl: Joi.optional(),
-            imageurl: Joi.optional()
+            imageurl: Joi.optional(),
+            islocationassigned : Joi.boolean().required(),
+            locationassignednames : Joi.optional()
         })
 
         const commonFields = await schema.validateAsync(req.body);
@@ -26,7 +28,7 @@ exports.register = async (req, res) => {
         commonFields.password = await bcrypt.hash(commonFields.password, salt);
 
         try {
-            let common = await Common.findOne({ email: commonFields.email })
+            let common = await Admin.findOne({ email: commonFields.email })
             //console.log(common,'user');
 
             //check if image included in payload
@@ -40,7 +42,7 @@ exports.register = async (req, res) => {
 
             }
             if (!common) {
-                common = new Common(commonFields);
+                common = new Admin(commonFields);
                 await common.save();
                 return res.status(200).json({
                     message: "User registered successfully",
@@ -80,10 +82,9 @@ exports.login = async (req, res) => {
             password: Joi.required()
         })
         const commonFields = await schema.validateAsync(req.body);
-        let common = await Common.findOne({ email: commonFields.email });
-        console.log(common, 'common field')
-
-        if(common){
+        let common = await Admin.findOne({ email: commonFields.email });
+    //    console.log(common)
+        if (common) {
             const isMatch = await bcrypt.compare(commonFields.password, common.password)
             console.log(isMatch,'match')
             if(isMatch){
@@ -118,7 +119,7 @@ exports.login = async (req, res) => {
                 })
             }
 
-        }else{
+        } else {
             return res.status(500).json({
                 message: "Something went wrong",
                 status: 500,
@@ -126,10 +127,11 @@ exports.login = async (req, res) => {
             })
         }
 
+
     } catch (err) {
-        return res.status(403).json({
+        return res.status(400).json({
             message: "Invalid email/password",
-            status: 403
+            status: 400
         })
     }
 }
@@ -138,7 +140,7 @@ exports.login = async (req, res) => {
 exports.singleuser = async (req, res) => {
     // console.log(req.params.id)
     try {
-        await Common.findById(req.params.id, (err, data) => {
+        await Admin.findById(req.params.id, (err, data) => {
             if (err) throw err
             return res.status(200).json({ status: 200, 'message': `User with ${req.params.id} fetched successfully`, 'singleuser': data });
 
@@ -163,7 +165,9 @@ exports.updateuser = async (req, res) => {
         sociallinks: Joi.string().required(),
         isActive: Joi.boolean().required(),
         storageurl: Joi.optional(),
-        imageurl: Joi.optional()
+        imageurl: Joi.optional(),
+        islocationassigned : Joi.boolean().required(),
+        locationassignednames : Joi.optional()
     })
 
     await schema.validateAsync(req.body);
@@ -183,14 +187,14 @@ exports.updateuser = async (req, res) => {
 
     }
     try {
-        const userInfo = await Common.findById(id);
+        const userInfo = await Admin.findById(id);
 
         if (!userInfo) {
             res.status(404);
             throw new Error('User not found')
         }
         else {
-            const data = await Common.findByIdAndUpdate(req.params.id, payload, { new: true })
+            const data = await Admin.findByIdAndUpdate(req.params.id, payload, { new: true })
             return res.status(200).json({ status: 200, 'message': 'User updated successfully', 'updateduser': data });
         }
 
@@ -225,7 +229,7 @@ exports.search = async(req,res)=>{
        }
    
         try {
-           await Common.find({"$or":[filterCond]}, {},query,(err, data)=>{
+           await Admin.find({"$or":[filterCond]}, {},query,(err, data)=>{
                if(err)throw err
                data.sort((a,b)=>{
                    return new Date(b.creation_dt) - new Date(a.creation_dt);
@@ -239,7 +243,7 @@ exports.search = async(req,res)=>{
             //    }
             //    })
            
-               Common.countDocuments({"$or":[filterCond]},(count_error, count) => {
+               Admin.countDocuments({"$or":[filterCond]},(count_error, count) => {
                    if (err) {
                      return res.json(count_error);
                    }
@@ -258,4 +262,18 @@ exports.search = async(req,res)=>{
            return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
        }
    
+}
+
+
+//delete parent
+exports.deleteuser = async(req,res)=>{
+    try{
+        await Admin.findByIdAndDelete(req.params.id,(err,data)=>{
+            if(err)throw err
+            return res.status(200).json({status : 200, 'message':'user deleted successfully',})
+        })
+
+    }catch (err) {
+        return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
+    }
 }

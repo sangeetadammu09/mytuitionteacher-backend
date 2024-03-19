@@ -18,8 +18,7 @@ const mailRoute = require('./routes/mailRoute')
 const parentRoute = require('./routes/parentRoute')
 const teacherRoute = require('./routes/teacherRoute')
 const feedbackRoute = require('./routes/feedbackRoute')
-const superAdminRoute = require('./routes/superadminRoute')
-const subAdminRoute = require('./routes/subadminRoute')
+const adminRoute = require('./routes/adminRoute')
 
 //swagger
 const swaggerUI = require('swagger-ui-express');
@@ -47,8 +46,8 @@ app.use('/contact', contactRoute);
 app.use('/parent',parentRoute)
 app.use('/teacher',teacherRoute)
 app.use('/feedback',feedbackRoute)
-app.use('/superadmin',superAdminRoute)
-app.use('/subadmin',subAdminRoute);
+app.use('/admin',adminRoute)
+
 //multer error handling
 app.use((err,req,res,next) => {
   // multer errors
