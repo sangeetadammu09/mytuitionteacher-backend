@@ -26,6 +26,7 @@ const tuitionRegisteredSchema = mongoose.Schema({
     teacherid: {type:String,required:false},
     isTeacherAssigned:{type:Boolean, default:false},  
     status:{type:String, default: 'open'},
+    teachersApplied : {type :String, required : false},
 },{timestamps:true, versionKey:false})
 
 

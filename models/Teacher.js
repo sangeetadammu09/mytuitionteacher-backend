@@ -18,7 +18,8 @@ const teacherRegisterSchema = mongoose.Schema({
     subjects:{type:String, required:['Subjects is required']},
     storageurl:{type:String, required:false}, 
     imageurl: {type:String, required:false},
-    isActive:{type:Boolean, required:true}
+    isActive:{type:Boolean, required:true},
+    isVerified:{type:Boolean, required:false}, 
 },{timestamps:true,versionKey:false})
 
 

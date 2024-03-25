@@ -52,10 +52,10 @@ app.use('/admin',adminRoute)
 app.use((err,req,res,next) => {
   // multer errors
   if(err instanceof multer.MulterError){
-    return res.status(418).json({err_code: err.code, err_message: err.message})
+    return res.status(418).json({err_code: 418, err_message: err.message})
   }else{
     //other application errors
-    return res.status(500).json({err_code: 409, err_message: "Something went wrong"})
+    return res.status(500).json({err_code: 500, err_message: "Something went wrong"})
   }
 })
 

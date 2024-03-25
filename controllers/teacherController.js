@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const RegisteredTeacher = require('../models/Teacher');
-const TeacherHistory = require('../models/teacherHistoryModel')
+const TeacherHistory = require('../models/teacherHistoryModel');
+const Parent = require('../models/Parent');
 
 
 exports.createteacher = async(req,res)=>{
@@ -22,6 +23,7 @@ exports.createteacher = async(req,res)=>{
         charge: Joi.string().required(),
         chargeType: Joi.string().required(),
         isActive :Joi.boolean().required(),
+        isVerified :Joi.boolean().required(),
         storageurl: Joi.optional(), 
         imageurl:  Joi.optional(),
     })
@@ -142,6 +144,7 @@ exports.updateteacher = async (req,res)=>{
         charge: Joi.string().required(),
         chargeType: Joi.string().required(),
         isActive :Joi.boolean().required(),
+        isVerified :Joi.boolean().required(),
         storageurl: Joi.optional(), 
         imageurl:  Joi.optional(),
     })
@@ -198,11 +201,11 @@ exports.deleteteacher = async(req,res)=>{
 //find teacher
 exports.appliedteacher = async(req,res)=>{
      try {
-         await RegisteredTeacher.findOne({ temail: req.body.email },(err, data)=>{
+         await RegisteredTeacher.findOne({email : req.body.email},(err, data)=>{
              if(err)throw err
              //if a user was not found
              if(!data){
-                return res.status(201).json({ 'message': `${req.body.email} is not found.`, status:204 });
+                return res.status(204).json({ 'message': `${req.body.email} is not found.`, status:204 });
               //  return next(err);
                
            }else{
@@ -212,7 +215,15 @@ exports.appliedteacher = async(req,res)=>{
                 teacherApplied.teacherDetails = data;
                 teacherApplied.tId = data._id;
                 teacherApplied.appliedJobs = [];
-                teacherApplied.appliedJobs.push({'jobId':req.body.jobId});
+                teacherApplied.appliedJobs.push({'jobId':req.body.appliedTutionid, 'comment' : req.body.comment});
+
+                // if(req.body.appliedTution._id){
+                // let parentPayload = req.body.appliedTution;
+                // parentPayload.teachersApplied.push({'teacherId':teacherApplied.tId});
+                // const data = Parent.findByIdAndUpdate( req.body.appliedTution._id,parentPayload,{new:true})
+                // return res.status(200).json({ "status": 200, 'message': 'tuition updated successfully', 'data':data});
+
+                // }
             //    console.log("Teacher applied", teacherApplied);
                 TeacherHistory.findOne({ tId : data._id },(err,data)=>{
                    console.log(data,'data')
@@ -256,7 +267,6 @@ exports.checkPhoneandEmailValidation = async(req,res)=>{
          return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
      }
  }
-
 
 //filter registered teacher
 exports.searchTeacher = async(req,res)=>{
@@ -304,3 +314,5 @@ exports.searchTeacher = async(req,res)=>{
          return res.status(500).json({ 'message': 'something went wrong', 'err': err.message })
      }
  }
+
+ 

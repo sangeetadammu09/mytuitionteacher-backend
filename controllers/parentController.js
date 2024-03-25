@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const Parent = require('../models/Parent');
+//const TeacherHistory = require('../models/teacherHistoryModel')
 
 exports.parentcreate = async(req,res)=>{
     const schema = Joi.object({
@@ -25,6 +26,7 @@ exports.parentcreate = async(req,res)=>{
         isActive :Joi.boolean().required(),
         status: Joi.optional(),
         isTeacherAssigned: Joi.optional(),
+        teachersApplied : Joi.optional(),
         storageurl: Joi.optional(),
         imageurl: Joi.optional()
     })
@@ -73,7 +75,7 @@ exports.listoftuitions = async(req,res)=>{
      }
      query.skip = size * (pageNo - 1)
      query.limit = size;
-     console.log(query,'query')
+
         try {
             await Parent.find({},{},query,(err, data)=>{
                 if(err)throw err
@@ -258,6 +260,7 @@ exports.updateparent = async (req,res)=>{
         isActive :Joi.boolean().required(),
         status: Joi.optional(),
         isTeacherAssigned: Joi.optional(),
+        teachersApplied : Joi.optional(),
         storageurl: Joi.optional(),
         imageurl: Joi.optional()
     })
