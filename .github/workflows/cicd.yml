@@ -21,7 +21,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: mytuitionteacher-backend
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_103809E64DCF45779DBCF496069F766F }}
           package: .       
 
               
