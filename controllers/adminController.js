@@ -37,7 +37,7 @@ exports.register = async (req, res) => {
                 payload.storageurl = storageUrl;
 
                 var getImageName = payload.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
-                let url = `http://localhost:8080/uploads/${getImageName[1]}`;
+                let url = process.env.HOSTED_API+`uploads/${getImageName[1]}`;
                 payload.imageurl = url;
 
             }
@@ -182,7 +182,7 @@ exports.updateuser = async (req, res) => {
         payload.storageurl = storageUrl;
 
         var getImageName = payload.storageurl.match(/\/([^\/?#]+)[^\/]*$/);
-        let url = `http://localhost:8080/uploads/${getImageName[1]}`;
+        let url = process.env.HOSTED_API+`uploads/${getImageName[1]}`;
         payload.imageurl = url;
 
     }
