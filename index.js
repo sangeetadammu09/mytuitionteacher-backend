@@ -33,10 +33,10 @@ app.get('/',(req,res)=>{
   res.send('Hello World!');
  // res.sendFile(path.join(__dirname,'public/index.html'));
 })
-app.use('/api-docs/helpmetutors',swaggerUI.serve,swaggerUI.setup(swaggerDocs));
+//app.use('/api-docs/helpmetutors',swaggerUI.serve,swaggerUI.setup(swaggerDocs));
 app.use(express.json());
 app.use(express.urlencoded({ limit: "50mb", parameterLimit: 500000000, extended:true }));
-app.use(cors({origin:'*',credentials:true}));
+app.use(cors());
 
 //static image for user
 app.use('/uploads', express.static('Storage/images'));
